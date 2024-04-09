@@ -7,7 +7,7 @@
         </div>
 
         <!-- stack option in the top middle of the page -->
-        <stack-bar :clickAction="hello" :stacks="stackData"/>
+        <stack-bar :stacks="stackData" :stackHandeler="selectNewStack" :header="selectedStack ? selectedStack?.title : ''" v-if="stackData.length > 0"/>
 
         <!-- sign out -->
         <sign-out name="Sign out" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" @click="() => addNotification('hello')"/>
@@ -21,9 +21,9 @@
                     <h1>Hi, {{ name }}</h1>
                     <h2>Let’s start, shall we.</h2>
                 </div>
-                <div id="total-budget" v-if="stackData.length">
+                <div id="total-budget" v-if="stackData.length > 0">
                     <h1>Envelope total</h1>
-                    <h2>R {{ stackData[0].total_budget }}</h2>
+                    <h2>R {{ selectedStack?.total_budget }}</h2>
                 </div>
                 <div class="options">
                     <my-button name="Delete" @click="toggleDelete"/>
@@ -74,13 +74,10 @@ const name = ref('Adriaan');
 const envelopeData = ref([])
 const stackData = ref([]);
 let isDeleting = ref(false)
+let start = true;
 
-let selectedStack = ref([])
+let selectedStack = shallowRef()
 let selectedEnvelopeId = ref(0)
-
-function hello(){
-    name.value = 'Dirk';
-}
 
 function addNotification(message){
     notificationsList.value.push(message);
@@ -91,6 +88,13 @@ function toggleDelete(){
     isDeleting.value = !isDeleting.value
 }
 
+function selectNewStack(id){
+    selectedStack.value = stackData.value.filter((stack) => stack.id === id);
+    selectedStack.value = selectedStack.value[0]
+    addEnvelopeObj.value.id = selectedStack.value.id
+    envelopeData.value = []
+    fetchData()
+}
 // function that handels envelope Add click
 const toggleAddEnvelopeVisible = () => {
     addEnvelopeObj.value.visible = !addEnvelopeObj.value.visible;
@@ -114,6 +118,10 @@ const toggleUpdateEnvelopeVisible = async(id) => {
 const fetchData = async () => {
     try {
         const stacks = await getStacks(); // Wait for getStacks to resolve
+        if (start) {
+            selectedStack.value = stacks[0]
+            start = false
+        }
         const envelopes = await getEnvelopes(); // Wait for getEnvelopes to resolve
         
         // Update reactive variables
@@ -145,9 +153,8 @@ const getStacks = async () => {
 
 const getEnvelopes = async () => {
     let responseData = {};
-
     try {
-        const response = await fetch('https://personal-buget-manager-api-part-2.onrender.com/envelopes/1');
+        const response = await fetch('https://personal-buget-manager-api-part-2.onrender.com/envelopes/'+selectedStack.value.id);
 
         if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -304,10 +311,6 @@ onMounted(() => {
     fetchData();
 });
 
-onUpdated(() => {
-    // fetchData();
-    
-});
 </script>
 
 <style lang="css">

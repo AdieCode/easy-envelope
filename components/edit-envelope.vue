@@ -22,9 +22,6 @@
         <my-button :name="propertys.type" :width="184" :height="60" :textSize="24" :round="10" margin="10px 10px" @click="buttonClick"/>
     </div>
     <div class="blur-back" @click="backGroundClick"></div>
-
-     <!-- add notification bottom left as notifications 
-     if something happens like (update, add, delete) -->
 </template>
 
 

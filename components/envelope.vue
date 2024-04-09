@@ -13,7 +13,8 @@
         <div class="right">
             <my-button name="Transfer" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" v-if="!deleting"/>
             <my-button name="Update" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" @click="updateHandeler" v-if="!deleting"/>
-            <my-button name="Delete" :width="184" :height="120" :textSize="36" :round="10" margin="10px 10px" @click="() => deleteHandeler(envelope_id)" v-if="deleting"/>
+            <my-button name="Delete" :width="184" :height="120" :textSize="36" :round="10" margin="10px 10px" @click="deleteConfirmerToggle" v-if="deleting"/>
+            <confirmation :funcHandeler="shouldDelelte" v-if="confirmationComponent"/>
         </div>
 
     </div>
@@ -21,6 +22,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+let confirmationComponent = ref(false);
 
 const props = defineProps({
     category: String,
@@ -31,6 +35,19 @@ const props = defineProps({
     deleting: {type: Boolean, default: false},
     envelope_id: {type: Number, default: 0}
 });
+
+function deleteConfirmerToggle(){
+    confirmationComponent.value = !confirmationComponent.value;
+}
+
+function shouldDelelte(value){
+    if (value){
+        props.deleteHandeler(props.envelope_id)
+        deleteConfirmerToggle()
+    } else {
+        deleteConfirmerToggle()
+    }
+}
 
 
 

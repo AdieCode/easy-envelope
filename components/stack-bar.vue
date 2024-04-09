@@ -3,7 +3,7 @@
 
             <!-- current stack -->
             <div class="stack">
-                <h2>Monthly</h2>
+                <h2>{{ header }}</h2>
                 <div class="side-drop">
                     <img src="../images/icons8-triangle-96.png" alt="">
                 </div>
@@ -11,7 +11,7 @@
 
             <!-- stack options -->
             <div class="stacks" v-for="(stack, index) in stacks" :key="index" v-if="backgroundBlur" >
-                <h1 @click="clickInStackBar"> 
+                <h1 @click="() => clickInStackBar(stack.id)"> 
                     {{stack.title}}
                 </h1>
                 <div class="options" style="display: flex; flex-direction: row;">
@@ -37,8 +37,9 @@ const wasClickInStackBar = ref(false)
 // const extraClass = ref('');
 
 const props = defineProps({
-    clickAction: Function,
-    stacks: Array
+    stacks: Array,
+    stackHandeler: Function,
+    header: String,
 });
 
 function showStackSelection(){
@@ -48,22 +49,18 @@ function showStackSelection(){
     }
 
     backgroundBlur.value = true;
-    handle();
 }
 
-function clickInStackBar(){
+function clickInStackBar(id){
     wasClickInStackBar.value = true;
     backgroundBlur.value = false;  
+    props.stackHandeler(id)
 }
 
 function hideStackSelection(){
     backgroundBlur.value = false;   
 }
 
-const handle = () => {
-  // Call the click action passed via props
-  props.clickAction();
-};
 </script>
 
 <style scoped>
