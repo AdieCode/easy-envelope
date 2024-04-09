@@ -1,41 +1,37 @@
 <template>
+
     <div class="envelope-container">
+        
+        <!-- envelope info -->
         <div class="left">
             <h1>{{ category }}</h1>
-            <h2>${{ budget }}</h2>
+            <h2>R {{ budget }}</h2>
             <p>{{ description }}</p>
         </div>
-        
+
+        <!-- options for envelope -->
         <div class="right">
-            <my-button name="Transaction" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px"/>
-            <my-button name="Update" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px"/>
-
+            <my-button name="Transfer" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px"/>
+            <my-button name="Update" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" @click="updateHandeler"/>
         </div>
-        <!-- <div class="loader">
-            <svg class="chart" viewBox="0 0 100 100">
-            
-                <circle class="circle" cx="50" cy="50" r="40" stroke="#ccc" stroke-width="8" fill="none" />
-           
-                <circle class="stroke" cx="50" cy="50" r="40" stroke="#3498db" stroke-width="8" fill="none" stroke-dasharray="0, 200" transform="rotate(-90 50 50)" />
-            </svg>
-        </div> -->
-
 
     </div>
+
 </template>
 
 <script setup>
-import { ref } from 'vue';
 
 const props = defineProps({
     category: String,
     budget: String,
-    description: String
-})
+    description: String,
+    updateHandeler: Function,
+});
 
 </script>
 
 <style scoped>
+
 .envelope-container{
     width: 49% ;
     height: 188px;
@@ -57,7 +53,6 @@ const props = defineProps({
     justify-content: space-evenly;
     margin-left: 25px;
     animation: showtext 0.4s;
-    /* background-color: aquamarine */
 }
 
 .left h1{
@@ -86,7 +81,6 @@ const props = defineProps({
     padding: 0px 20px;
     border-left: 3px solid #FFC857;
     border-radius: 20px;
-    /* background-color: #fff; */
 }
 
 /* .envelope-container:hover{
@@ -120,19 +114,18 @@ const props = defineProps({
 
 .loader {
     z-index: 2px;
-  width: 80px; /* Adjusted width */
-  height: 80px; /* Adjusted height */
+    width: 80px; 
+    height: 80px; 
 }
 
 .chart {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .circle {
-  stroke-dasharray: 50;
-  stroke-dashoffset: 0;
-  /* animation: dash 2s linear infinite; */
+    stroke-dasharray: 50;
+    stroke-dashoffset: 0;
 }
 
 @keyframes dash {

@@ -1,5 +1,5 @@
 <template>
-    <div class="button-container" >
+    <div class="button-container">
         Sign out
     </div>
 </template>

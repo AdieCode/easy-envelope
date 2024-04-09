@@ -1,42 +1,40 @@
 <template>
         <div class="stack-bar"  @click="showStackSelection">
+
+            <!-- current stack -->
             <div class="stack">
                 <h2>Monthly</h2>
                 <div class="side-drop">
                     <img src="../images/icons8-triangle-96.png" alt="">
                 </div>
-
             </div>
 
-            <div class="stacks" v-for="(stack, index) in stacks" :key="index" v-if="backgroundBlur">
-                <h1>
+            <!-- stack options -->
+            <div class="stacks" v-for="(stack, index) in stacks" :key="index" v-if="backgroundBlur" >
+                <h1 @click="clickInStackBar"> 
                     {{stack.title}}
                 </h1>
-
                 <div class="options" style="display: flex; flex-direction: row;">
-
                     <div class="Edit">
                         <img src="../images/icons8-edit-480.png" alt="">
                     </div>
-                    
                     <div class="delete"> 
                         <img src="../images/icons8-trash-480.png" alt="">
                     </div>
-    
                 </div>
-
-
             </div>
 
         </div>
         <div class="blur-back" v-if="backgroundBlur" @click="hideStackSelection"></div>
+
 </template>
 
 <script setup>
 import { ref } from 'vue';
 
 const backgroundBlur = ref(false);
-const extraClass = ref('');
+const wasClickInStackBar = ref(false)
+// const extraClass = ref('');
 
 const props = defineProps({
     clickAction: Function,
@@ -44,21 +42,27 @@ const props = defineProps({
 });
 
 function showStackSelection(){
+    if (wasClickInStackBar.value){
+        wasClickInStackBar.value = false;
+        return 
+    }
+
     backgroundBlur.value = true;
     handle();
 }
 
-function hideStackSelection(){
-    backgroundBlur.value = false;
-    handle();
+function clickInStackBar(){
+    wasClickInStackBar.value = true;
+    backgroundBlur.value = false;  
+}
 
+function hideStackSelection(){
+    backgroundBlur.value = false;   
 }
 
 const handle = () => {
   // Call the click action passed via props
   props.clickAction();
-
-  
 };
 </script>
 
@@ -124,8 +128,6 @@ const handle = () => {
 .stack-bar:hover .side-drop img {
     transform: translateY(5px); /* Move the image slightly when hovering */
 }
-
-
 
 .stack-bar h2{
     margin: 20px;
