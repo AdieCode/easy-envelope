@@ -23,17 +23,26 @@
                 </div>
                 <div id="total-budget" v-if="stackData.length">
                     <h1>Envelope total</h1>
-                    <h2>R {{ stackData[1].total_budget }}</h2>
+                    <h2>R {{ stackData[0].total_budget }}</h2>
                 </div>
                 <div class="options">
-                    <my-button name="Delete" />
+                    <my-button name="Delete" @click="toggleDelete"/>
                     <my-button name="Add" @click="toggleAddEnvelopeVisible"/>
                 </div>
             </div>
 
             <div class="bottom">
                 <template v-if="envelopeData.length">
-                    <envelope v-for="(envelope, index) in envelopeData" :key="index" :category="envelope.category" :budget="envelope.current_budget" :description="envelope.description" :updateHandeler="() => toggleUpdateEnvelopeVisible(envelope.id)"/>
+
+                    <envelope v-for="(envelope, index) in envelopeData" :key="index" 
+                    :category="envelope.category" 
+                    :budget="envelope.current_budget" 
+                    :description="envelope.description" 
+                    :updateHandeler="() => toggleUpdateEnvelopeVisible(envelope.id)" 
+                    :deleteHandeler="deleteEnvelope" 
+                    :deleting="isDeleting"
+                    :envelope_id="envelope.id"/>
+
                 </template>
 
                 <template v-else>
@@ -61,6 +70,14 @@
 import { ref, shallowRef } from 'vue';
 
 let notificationsList = shallowRef([]);
+const name = ref('Adriaan');
+const envelopeData = ref([])
+const stackData = ref([]);
+let isDeleting = ref(false)
+
+let selectedStack = ref([])
+let selectedEnvelopeId = ref(0)
+
 function hello(){
     name.value = 'Dirk';
 }
@@ -70,17 +87,9 @@ function addNotification(message){
     console.log(notificationsList.value)
 }
 
-function printIt(val1, val2){
-    console.log('this is value one :' + val1)
-    console.log('this is value two :' + val2)
+function toggleDelete(){
+    isDeleting.value = !isDeleting.value
 }
-
-const name = ref('Adriaan');
-const envelopeData = ref([])
-const stackData = ref([]);
-
-let selectedStack = ref([])
-let selectedEnvelopeId = ref(0)
 
 // function that handels envelope Add click
 const toggleAddEnvelopeVisible = () => {
@@ -194,6 +203,7 @@ const addEnvelope = async (stack_id, category, budget) => {
         }
 
         const responseData = await response.json();
+        fetchData();
         addNotification('Envelope Added')
         return responseData;
     } catch (error) {
@@ -231,11 +241,31 @@ const updateEnvelope = async (envelope_id, category, budget) => {
         if (!response1.ok && !response2.ok) {
             throw new Error('Network response was not ok');
         }
+        fetchData();
         addNotification('Envelope Updated')
 
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
         throw error; // Rethrow the error for handling outside
+    }
+};
+
+const deleteEnvelope = async (envelope_id) => {
+    
+    try {
+        const response = await fetch('https://personal-buget-manager-api-part-2.onrender.com/envelopes/' + envelope_id, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        fetchData();
+        addNotification('Envelope Deleted')
+
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+        throw error; 
     }
 };
 
@@ -266,7 +296,7 @@ function popListInterval() {
         notificationsList.value = notificationsList.value.filter((_, i) => i !== 0);
       console.log(notificationsList.value)
     }
-  }, 8000); // 10 seconds
+  }, 10000); // 10 seconds
 }
 
 onMounted(() => {
@@ -275,7 +305,7 @@ onMounted(() => {
 });
 
 onUpdated(() => {
-    fetchData();
+    // fetchData();
     
 });
 </script>

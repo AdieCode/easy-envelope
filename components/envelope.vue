@@ -11,8 +11,9 @@
 
         <!-- options for envelope -->
         <div class="right">
-            <my-button name="Transfer" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px"/>
-            <my-button name="Update" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" @click="updateHandeler"/>
+            <my-button name="Transfer" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" v-if="!deleting"/>
+            <my-button name="Update" :width="184" :height="60" :textSize="20" :round="10" margin="10px 10px" @click="updateHandeler" v-if="!deleting"/>
+            <my-button name="Delete" :width="184" :height="120" :textSize="36" :round="10" margin="10px 10px" @click="() => deleteHandeler(envelope_id)" v-if="deleting"/>
         </div>
 
     </div>
@@ -26,7 +27,12 @@ const props = defineProps({
     budget: String,
     description: String,
     updateHandeler: Function,
+    deleteHandeler: Function,
+    deleting: {type: Boolean, default: false},
+    envelope_id: {type: Number, default: 0}
 });
+
+
 
 </script>
 
@@ -87,6 +93,16 @@ const props = defineProps({
     transform: translate(6px, 6px);
     box-shadow: 0px 0px #1B3F5A;
 } */
+
+.selector{
+    min-width: 100px;
+    min-height: 100px;
+    background-color: #1F2041;
+    border: 10px solid #1F2041;
+    outline: 10px solid #FFC857;
+    border-radius: 20px;
+    margin: 20px;
+}
 
 @keyframes showtext {
     0%{
